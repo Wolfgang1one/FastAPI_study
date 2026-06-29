@@ -17,19 +17,21 @@ app = FastAPI()
 async def startup_event():
     await create_tables()
 
-
+# 查询所有图书
 @app.get("/books")
 async def get_books(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Book))
     book = result.scalars().all()
     return book
 
+# get请求，根据路径参数查询图书
 @app.get("/books/{book_id}")
 async def get_book(book_id: int, db: AsyncSession = Depends(get_db)):
     db_result = await db.execute(select(Book).where(Book.id == book_id))
     response_result = db_result.scalar_one_or_none()
     return response_result
 
+# post请求，查询大于等于图书价格的图书
 @app.post("/books/book_price", response_model=List[BookResponse])
 async def search_books_by_price(book_query: BookQuery, db: AsyncSession = Depends(get_db)):
     db_result = await db.execute(select(Book).where(Book.price >= book_query.price))
