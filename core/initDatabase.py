@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import create_async_engine
-from models import Base
+from models.Base import Base
 
 ASYNC_DATABASE_URL = "mysql+aiomysql://root:891460493@localhost:3306/fastapi_test?charset=utf8mb4"
 
