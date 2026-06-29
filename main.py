@@ -17,6 +17,23 @@ app = FastAPI()
 async def startup_event():
     await create_tables()
 
+# 需求：查询作者以 曹开头的图书  曹 % _
+@app.post("/books/author", response_model=List[BookResponse])
+async def query_book_list_by_author(
+        db: AsyncSession = Depends(get_db)):
+    db_result = await db.execute(select(Book).where(Book.author.like('曹_')))
+    reponse_result = db_result.scalars().all()
+    return reponse_result
+
+# 需求：查询作者以 曹开头的图书  曹 % _
+@app.post("/books/queryBookListByIdList", response_model=List[BookResponse])
+async def query_book_list_by_id_list(
+        book_query: BookQuery,
+        db: AsyncSession = Depends(get_db)):
+    db_result = await db.execute(select(Book).where(Book.id.in_(book_query.book_id_list)))
+    reponse_result = db_result.scalars().all()
+    return reponse_result
+
 # 查询所有图书
 @app.get("/books")
 async def get_books(db: AsyncSession = Depends(get_db)):
