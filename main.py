@@ -8,6 +8,7 @@ from core.database import get_db
 from core.initDatabase import create_tables
 from models.Book import Book
 from schemas.BookSchema import BookQuery, BookResponse, BookAggregationResponse
+from schemas.Page import PageResponse,  PageQuery, paginate
 
 app = FastAPI()
 
@@ -78,3 +79,12 @@ async def search_books_by_price(book_query: BookQuery, db: AsyncSession = Depend
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+@app.post("/books/getBooksPage", response_model=PageResponse[BookResponse])
+async def get_books_page(
+        page_query: PageQuery,
+        db: AsyncSession = Depends(get_db),
+):
+    stmt = select(Book).order_by(Book.id)
+    db_result = await paginate(db, stmt, page_query.page, page_query.size)
+    return db_result
