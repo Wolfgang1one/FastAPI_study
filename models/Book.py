@@ -6,7 +6,7 @@ from .Base import Base
 # 书籍表：id，书名，作者，价格，出版社；
 class Book(Base):
     __tablename__ = "book"
-    id: Mapped[int] = mapped_column(
+    book_id: Mapped[int] = mapped_column(
         primary_key=True,
         autoincrement=True,
         comment='书籍id',
